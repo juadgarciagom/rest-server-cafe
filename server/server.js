@@ -19,9 +19,10 @@ app.use(bodyParser.json());
 app.use(require('./routes/index'));
 
 //Utilización de mongoose para conectar con la base de datos
-mongoose.connect('mongodb+srv://admin:admin@cafedb.duerz.mongodb.net/test', { useNewUrlParser: true, useUnifiedTopology: true }, (err, resp) => {
+
+mongoose.connect(process.env.URLDB, { useNewUrlParser: true, useUnifiedTopology: true }, (err, resp) => {
     if (err) throw err;
-    console.log('Data base connected!!');
+    console.log('Data base connected!!', process.env.URLDB);
 });
 
 //Inicialización del servidor
