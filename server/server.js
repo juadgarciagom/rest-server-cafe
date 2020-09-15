@@ -25,6 +25,6 @@ mongoose.connect('mongodb://localhost:27017/cafe', { useNewUrlParser: true, useU
 });
 
 //Inicialización del servidor
-app.listen(3000, () => {
+app.listen(process.env.PORT, () => {
     console.log('Servidor montado en el puerto', process.env.PORT);
 });
