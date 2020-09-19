@@ -77,17 +77,89 @@ async function verify(token) {
         audience: process.env.CLIENT_ID,
     });
     const payload = ticket.getPayload();
-    console.log(payload);
-}
 
-app.post('/google', (req, res) => {
+    return {
+        name: payload.name,
+        email: payload.email,
+        img: payload.picture,
+        google: true
+    }
+};
+
+app.post('/google', async(req, res) => {
     let token = req.body.idtoken;
 
-    verify(token);
+    let googleUser = await verify(token)
+        .catch(err => {
+            return res.status(403).json({
+                ok: false,
+                err
+            });
+        });
 
-    res.json({
-        token: token
-    })
+    userModel.findOne({ email: googleUser.email }, (err, userDB) => {
+        if (err) {
+            return res.status(500).json({
+                ok: false,
+                message: err
+            });
+        }
+
+        if (userDB) {
+
+            if (userDB.google === false) {
+                return res.status(400).json({
+                    ok: false,
+                    error: {
+                        message: 'Debe iniciar sesión con un nombre de usuario y contraseña'
+                    }
+                });
+            } else {
+                let token = jwt.sign({
+                    user: userDB
+                }, process.env.SEED, { expiresIn: process.env.DURATION_TOKEN });
+
+                return res.json({
+                    ok: true,
+                    user: userDB,
+                    token_id: token
+                });
+            };
+        } else {
+            //Si no existe el usuario se crea (Otra forma de utilizar el modelo)
+
+            let user = new userModel();
+
+            user.name = googleUser.name;
+            user.email = googleUser.email;
+            user.password = ':)';
+            user.img = googleUser.img;
+            user.google = googleUser.google;
+
+            user.save((err, userSaved) => {
+                if (err) {
+                    return res.status(400).json({
+                        ok: false,
+                        message: err
+                    });
+                };
+
+                let token = jwt.sign({
+                    user: userSaved
+                }, process.env.SEED, { expiresIn: process.env.DURATION_TOKEN });
+
+                return res.json({
+                    ok: true,
+                    user: userSaved,
+                    token
+                });
+
+            });
+
+        };
+    });
+
+
 });
 
 module.exports = app;
