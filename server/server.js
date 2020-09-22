@@ -19,7 +19,7 @@ app.use(bodyParser.json());
 //Habilitación de las rutas en public
 app.use(express.static(path.resolve(__dirname, '../public')));
 
-console.log(path.resolve(__dirname, '../public'));
+//console.log(path.resolve(__dirname, '../public'));
 
 
 //Middlewares de las rutas

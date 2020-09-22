@@ -19,6 +19,9 @@ app.get('/products', checkToken, (req, res) => {
     limit = parseInt(limit);
 
     productModel.find({ status: true }, 'name unit_price category avaible user')
+        .sort('name')
+        .populate('category', 'name')
+        .populate('user', 'name email')
         .skip(since)
         .limit(limit)
         .exec((err, productsDB) => {
@@ -50,28 +53,31 @@ app.get('/products', checkToken, (req, res) => {
 app.get('/products/:id', checkToken, (req, res) => {
     let id = req.params.id;
 
-    productModel.findById(id, (err, productDB) => {
-        if (err) {
-            return res.status(404).json({
-                ok: false,
-                message: err
-            });
-        };
+    productModel.findById({ '_id': id })
+        .populate('category', 'name')
+        .populate('user', 'name email')
+        .exec((err, productDB) => {
+            if (err) {
+                return res.status(404).json({
+                    ok: false,
+                    message: err
+                });
+            };
 
-        if (productDB === null) {
-            return res.status(404).json({
-                ok: false,
-                error: {
-                    message: 'El producto que desea buscar no existe en la DB'
-                }
-            });
-        };
+            if (productDB === null) {
+                return res.status(404).json({
+                    ok: false,
+                    error: {
+                        message: 'El producto que desea buscar no existe en la DB'
+                    }
+                });
+            };
 
-        res.json({
-            ok: true,
-            productFind: productDB
+            res.json({
+                ok: true,
+                productFind: productDB
+            });
         });
-    });
 });
 
 //PUT

@@ -16,7 +16,7 @@ let productSchema = new Schema({
     },
     category: {
         type: Schema.Types.ObjectId,
-        ref: 'category',
+        ref: 'Category',
         required: [true, 'La id de la categoria del producto es requerida']
     },
     avaible: {
@@ -25,7 +25,7 @@ let productSchema = new Schema({
     },
     user: {
         type: Schema.Types.ObjectId,
-        ref: 'user',
+        ref: 'User',
         required: [true, 'El id del usuario es requerido']
     },
     status: {

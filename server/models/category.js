@@ -13,7 +13,7 @@ let categorySchema = new Schema({
     },
     user: {
         type: Schema.Types.ObjectId,
-        ref: 'user',
+        ref: 'User',
         required: [true, 'Ingrese el id del usuario']
     },
     status: {

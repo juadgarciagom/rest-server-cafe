@@ -132,7 +132,7 @@ app.post('/google', async(req, res) => {
 
             user.name = googleUser.name;
             user.email = googleUser.email;
-            user.password = ':)';
+            user.password = '.....';
             user.img = googleUser.img;
             user.google = googleUser.google;
 

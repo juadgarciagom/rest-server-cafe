@@ -19,6 +19,8 @@ app.get('/categories', checkToken, (req, res) => {
     limit = parseInt(limit);
 
     categoryModel.find({ status: true }, 'name user')
+        .sort({ name: 'desc' }) //Me ordena la lista de manera descendente
+        .populate('user', 'name email')
         .skip(since)
         .limit(limit)
         .exec((err, categoriesDB) => {
@@ -50,28 +52,30 @@ app.get('/categories', checkToken, (req, res) => {
 app.get('/categories/:id', checkToken, (req, res) => {
     let id = req.params.id;
 
-    categoryModel.findById(id, (err, categoryDB) => {
-        if (err) {
-            return res.status(404).json({
-                ok: false,
-                message: err
-            });
-        };
+    categoryModel.findById({ '_id': id })
+        .populate('user')
+        .exec((err, categoryDB) => {
+            if (err) {
+                return res.status(404).json({
+                    ok: false,
+                    message: err
+                });
+            };
 
-        if (categoryDB === null) {
-            return res.status(404).json({
-                ok: false,
-                error: {
-                    message: 'La categoria que desea buscar no existe en la DB'
-                }
-            });
-        };
+            if (categoryDB === null) {
+                return res.status(404).json({
+                    ok: false,
+                    error: {
+                        message: 'La categoria que desea buscar no existe en la DB'
+                    }
+                });
+            };
 
-        res.json({
-            ok: true,
-            categoryFind: categoryDB
+            res.json({
+                ok: true,
+                categoryFind: categoryDB
+            });
         });
-    });
 });
 
 //PUT
