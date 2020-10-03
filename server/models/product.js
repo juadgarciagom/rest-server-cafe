@@ -19,6 +19,10 @@ let productSchema = new Schema({
         ref: 'Category',
         required: [true, 'La id de la categoria del producto es requerida']
     },
+    img: {
+        type: String,
+        required: false
+    },
     avaible: {
         type: Boolean,
         default: true
